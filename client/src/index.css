@@ -1,0 +1,10 @@
+@import "tw-elements-react/dist/css/tw-elements-react.min.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.pacifico-regular {
+    font-family: "Pacifico", cursive;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
