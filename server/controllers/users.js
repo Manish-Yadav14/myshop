@@ -7,13 +7,13 @@ const {SECRET_KEY} = process.env;
 // Generate a JWT token
 const generateToken = (User) => {
     return jwt.sign({email: User.email , username:User.username}, SECRET_KEY, {
-      expiresIn: "2h", // Token expires in 1 hour
+      expiresIn: "2h",
     });
 };
 
 const signup = async (req,res)=>{
     try {
-        const {username,email,password} = req.body;
+        const {username,email,password,role} = req.body;
         // Email validation (basic example)
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -21,7 +21,7 @@ const signup = async (req,res)=>{
         }
 
         //checking if user exists already
-        const existingUser = await prisma.user.findFirst({ where: {email: email,}});
+        const existingUser = await prisma.user.findFirst({ where: {email: email}});
         if (existingUser) {
             return res.status(400).send({ error: 'Username already exists' });
         }
@@ -30,10 +30,8 @@ const signup = async (req,res)=>{
         const salt = await bcrypt.genSalt(10); // Generate a salt for hashing
         const hashedPassword = await bcrypt.hash(password, salt); // Hash the password with the salt
 
-        const newUser = await prisma.user.create({data:{username,email,password:hashedPassword}});
+        const newUser = await prisma.user.create({data:{username,email,password:hashedPassword,role:role.toUpperCase()}});
 
-        // const token = generateToken(newUser);
-        // console.log({token});
         if(newUser){
             return res.status(201).send("User registered... Login Now");
         }
@@ -46,14 +44,13 @@ const signup = async (req,res)=>{
 const login = async (req,res)=>{
     try {
         const {email,password} = req.body;
-        console.log({email,password});
-        //check for user exists or not...
-        const User = await prisma.user.findFirst({where:{email:email,}});
+
+        //Check for User exists or not...
+        const User = await prisma.user.findFirst({where:{email:email}});
         if(!User){
             return res.status(404).send({ error: 'User not found' });
         }
 
-        console.log(User);
 
         // Compare hashed passwords
         const isMatch = await bcrypt.compare(password, User.password);
@@ -64,7 +61,6 @@ const login = async (req,res)=>{
         //generate token
         const token = generateToken(User);
 
-        // console.log({token});
         return res.status(201).send({token});
         
     } catch (error) {
@@ -75,8 +71,8 @@ const login = async (req,res)=>{
 const getUserInfo = async(req,res)=>{
     const {email} = req.body;
     try {
-        const userInfo = await prisma.user.findFirst({where:{email:email}})
-        return res.status(201).send(userInfo);
+        const userInfo = await prisma.user.findFirst({where:{email:email},include:{cartItems:true}})
+        return res.status(200).send(userInfo);
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }

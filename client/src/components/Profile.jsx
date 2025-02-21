@@ -19,11 +19,30 @@ export default function SidebarOne() {
   const [description,setDesciption] = useState("");
   const [category,setCategory] = useState("");
   const [price,setPrice] = useState("");
+  const [image,setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+
+  const handleImageChange = (e)=>{
+    const file = e.target.files[0];
+    console.log(file);
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file)); 
+    } 
+  }
 
   const handleFormSubmit = async (e)=>{
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3000/api/add-product",{name:productName,description,price,category});
+      const formData = new FormData();
+      formData.append("image",image);
+      const uploadresponse = await axios.post("http://localhost:3000/api/images/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",  // Indicate the content type as multipart
+        },
+      });
+
+      const res = await axios.post("http://localhost:3000/api/add-product",{name:productName,description,price,category,images:[uploadresponse.data.imageUrl]});
       if(res.status==201) 
         console.log("Product added!!");
         alert("product added");
@@ -186,6 +205,25 @@ export default function SidebarOne() {
                     placeholder="Enter Price"
                     id="price"
                   ></input>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="image" className="text-base font-medium text-gray-900">
+                    {' '}
+                    Images{' '}
+                  </label>
+                </div>
+                <div className="mt-2">
+                  <input
+                    onChange={handleImageChange}
+                    className="flex h-10 w-[500px] rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    type="file"
+                    accept="image/*"
+                    id="image"
+                  ></input>
+                  {imagePreview && <img src={imagePreview} alt="preview" width="500" />}
                 </div>
               </div>
               <div>

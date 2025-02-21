@@ -1,32 +1,56 @@
-require('dotenv').config();
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
 const app = express();
-const cors = require('cors');
+const cors = require("cors");
+const userRouter = require("./routes/users");
+const productRouter = require("./routes/products");
+const cartRouter = require("./routes/cart");
+const uploadImageRouter = require('./routes/imageUpload');
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const port = 3000;
-const userRouter = require('./routes/users');
-const productRouter = require('./routes/products');
-const cartRouter = require('./routes/cart')
-// const authorisation = require('./middleware/authorisation');
 
-// Middleware to parse JSON bodies
+// middleware
 app.use(express.json());
+app.use(cors());
 
-// Allow requests from your frontend
-app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST'], // Specify the HTTP methods you want to allow
-    credentials: true, // Include this if you are dealing with credentials (cookies, authorization headers, etc.)
-}));
+// Routes
+app.use("/auth", userRouter);
+app.use("/api", productRouter);
+app.use("/cart", cartRouter);
+app.use("/api/images",uploadImageRouter)
+
+// payment gateway
+app.post("/create-checkout-session", async (req, res) => {
+  try {
+    if(!Array.isArray(req.body.items)) return res.json({msg:"Cart is empty"});
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: req.body.items.map((item) => ({
+        price_data: {
+          currency: 'inr',
+          product_data: {
+            name: item.product.name,
+          },
+          unit_amount: item.product.price*100,
+        },
+        quantity: item.quantity,
+      })),
+      mode: 'payment',
+      success_url: 'http://localhost:5173/success',
+      cancel_url: 'http://localhost:5173/failed',
+    });
+
+    return res.json({id:session.id})
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: error.message });
+  }
+
+});
 
 
-//Routes
-
-app.use('/auth',userRouter);
-app.use('/api',productRouter);
-app.use('/cart',cartRouter);
-
-  
 //Server Initialisation
 app.listen(port, () => {
-    console.log(`Server running on port ${port}...`);
+  console.log(`Server running on port ${port}...`);
 });

@@ -9,9 +9,12 @@ const cartSlice = createSlice({
   },
   reducers: {
     addItemToCart: (state, action) => {
-      state.items = action.payload;
-      state.quantity = state.items.length;
-      // state.totalPrice += newItem.price;
+      console.log(action.payload)
+      state.totalQuantity += 1;
+      const idx = state.items.findIndex((e)=>e.id==action.payload.id);
+      if(idx!==-1) state.items.splice(idx,1);
+      state.items.push(action.payload);
+      console.log("ITEMS: ",JSON.stringify(state.totalQuantity));
     },  
     clearCart: (state) => {
         // Reset the cart to its initial state

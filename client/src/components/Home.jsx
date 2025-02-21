@@ -11,8 +11,8 @@ function Home() {
             className="relative float-left -mr-[100%] hidden w-full transition-transform duration-[600ms] ease-in-out motion-reduce:transition-none"
           >
             <img
-              src="https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/5bd9c5c309353306.jpeg"
-              className="block w-full h-[246.46px]"
+              src="https://res.cloudinary.com/dieioqzty/image/upload/v1739460703/ecommerce/zwfoatmkaljoyyoaushp.jpg"
+              className="block w-full h-[246.46px] object-cover"
               alt="..."
             />
             <div className="absolute inset-x-[15%] bottom-5 hidden py-5 text-center text-white md:block">
@@ -27,8 +27,8 @@ function Home() {
             className="relative float-left hidden -mr-[100%] w-full transition-transform duration-[600ms] ease-in-out motion-reduce:transition-none"
           >
             <img
-              src="https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/4373e1bc9ffd7daa.jpeg?q=20"
-              className="block w-full h-[246.46px]"
+              src="https://res.cloudinary.com/dieioqzty/image/upload/v1739460806/ecommerce/unmoqccbf0sahmhqpk7b.webp"
+              className="block w-full h-[246.46px] object-cover"
               alt="..."
             />
             <div className="absolute inset-x-[15%] bottom-5 hidden py-5 text-center text-white md:block">
@@ -43,8 +43,8 @@ function Home() {
             className="relative float-left -mr-[100%] hidden w-full transition-transform duration-[600ms] ease-in-out motion-reduce:transition-none"
           >
             <img
-              src="https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/44fe68e438b997c9.jpeg?q=20"
-              className="block w-full h-[246.46px]"
+              src="https://res.cloudinary.com/dieioqzty/image/upload/v1739460860/ecommerce/zeb8moswayzvky4cbmrb.webp"
+              className="block w-full h-[246.46px] object-cover"
               alt="..."
             />
             <div className="absolute inset-x-[15%] bottom-5 hidden py-5 text-center text-white md:block">
